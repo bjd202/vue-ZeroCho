@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>좋아요</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <script src='main.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div id="root">
+        <div v-if="liked">좋아요 누름</div>
+        <button v-else v-on:click="onClickButton">Like</button>
+    </div>
+</body>
+
+<script>
+    const app = new Vue({
+        el: '#root',
+        data: {
+            liked: false,
+        },
+        methods: {
+            onClickButton() {
+                this.liked = true;
+            }
+        }
+    })
+</script>
+
+</html>
