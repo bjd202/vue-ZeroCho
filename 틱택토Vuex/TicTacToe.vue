@@ -1,38 +1,38 @@
 <template>
     <div>
         <div>{{turn}}님의 턴</div>
-        <table-component :table-data="tableData" />
+        <table-component>
+            <tr v-for="(rowData, rowIndex) in tableData" :key="rowIndex">
+                <td @click="onClickTd(rowIndex, cellIndex)" v-for="(cellData, cellIndex) in rowData" :key="cellIndex">{{cellData}}</td>
+            </tr>
+        </table-component>
         <div v-if="winner">{{winner}} 님의 승리</div>
     </div>
     
 </template>
 
 <script>
-import TableComponent from './TableComponent'
-import EventBus from './EventBus'
+import {mapState} from 'vuex'
+import TableComponent from './TableComponent.vue';
+import store, { CHANGE_TURN, CLICK_CELL, NO_WINNER, RESET_GAME, SET_WINNER } from './store'
 
 export default {
-    components: {
-        TableComponent,
+    components: { TableComponent },
+    store,
+    computed: {
+        ...mapState(['tableData', 'winner', 'turn']),
+        // winner(){
+        //     return this.$store.state.winner
+        // },
+        // turn(){
+        //     return this.$store.state.turn
+        // }
     },
-    data(){
-        return{
-            tableData:[
-                ['', '', ''],
-                ['', '', ''],
-                ['', '', '']
-            ],
-            turn: 'O',
-            winner: ''
-        }
-    },
-    methods:{
-        onChangeData(){
-            // this.tableData[1][0] = 'X' 작동 안함
-            this.$set(this.tableData[1], 0, 'X') // Vue.set과 동일
-        },
+    methods: {
         onClickTd(rowIndex, cellIndex){
             if(this.cellData) return;
+
+            this.$store.commit(CLICK_CELL, {row: rowIndex, cell: cellIndex})
 
             const rootData = this.$root.$data
             console.log(this)
@@ -53,13 +53,8 @@ export default {
             }
 
             if(win){
-                this.winner = this.turn
-                this.turn = 'O'
-                this.tableData = [
-                    ['', '', ''],
-                    ['', '', ''],
-                    ['', '', '']
-                ]
+                this.$store.commit(SET_WINNER, this.turn)
+                this.$store.commit(RESET_GAME)
             }else { // 지거나 무승부
                 let all = true
                 this.tableData.forEach(row => {
@@ -71,21 +66,13 @@ export default {
                 });
 
                 if(all){
-                    this.turn = 'O'
-                    this.winner = ''
-                    this.tableData = [
-                        ['', '', ''],
-                        ['', '', ''],
-                        ['', '', '']
-                    ]
+                    this.$store.commit(NO_WINNER)
+                    this.$store.commit(RESET_GAME)
                 }else{
-                    this.turn = this.turn === 'O' ? 'X' : 'O'
+                    this.$store.commit(CHANGE_TURN)
                 }
             }
-        },
-    },
-    created(){
-        EventBus.$on('clickTd', this.onClickTd)
+        }
     }
 }
 </script>
