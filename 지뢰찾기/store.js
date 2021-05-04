@@ -82,6 +82,13 @@ export default new Vuex.Store({
         [OPEN_CELL](state, {row, cell}){
             function checkAround() {
                 let around = []
+
+                if(state.tableData[row-1]){
+                    around = around.concat([
+                        state.tableData[row-1][cell-1]
+                    ])
+                }
+
                 around = around.concat([
                     state.tableData[row-1][cell-1], state.tableData[row-1][cell], state.tableData[row-1][cell+1]
                 ])
