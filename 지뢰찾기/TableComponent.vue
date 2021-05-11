@@ -65,7 +65,7 @@ export default {
                     case CODE.CLICKED_MINE:
                         return '펑'
                     default:
-                        return ''
+                        return this.$store.state.tableData[row][cell] || ''
                 }
             }
         }
